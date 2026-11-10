@@ -15,9 +15,21 @@ client = OpenAI(
 
 
 def call_llm(messages: list) -> str:
-    response = client.chat.completions.create(
+    # Streaming keeps the connection alive during long generations (avoids API timeouts);
+    # the chunks are joined and returned as a single string.
+    stream = client.chat.completions.create(
         model=MODEL,
         messages=messages,
+        stream=True,
         extra_body={'chat_template_kwargs': {'enable_thinking': False}}
     )
-    return response.choices[0].message.content
+
+    chunks = []
+    for chunk in stream:
+        if not chunk.choices:
+            continue
+        content = chunk.choices[0].delta.content
+        if content:
+            chunks.append(content)
+
+    return ''.join(chunks)
