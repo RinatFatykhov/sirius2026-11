@@ -8,6 +8,7 @@ def main():
     ]
 
     response = call_llm(messages)
+    print(response)
 
 
 if __name__ == '__main__':
