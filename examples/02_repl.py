@@ -29,8 +29,6 @@ def main():
         # показываем ответ в консоль
         print(reply)
 
-    print(f"Контекст: {len(messages)} сообщений")
-
 
 if __name__ == "__main__":
     main()
