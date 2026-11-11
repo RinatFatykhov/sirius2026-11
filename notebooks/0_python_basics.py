@@ -75,15 +75,6 @@ def _():
     return
 
 
-@app.cell
-def _():
-    a_2 = 5
-    print(a_2, '|', type(a_2))
-    a_2 = float(a_2)
-    print(a_2, '|', type(a_2))
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
