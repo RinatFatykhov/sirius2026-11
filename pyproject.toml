@@ -12,6 +12,7 @@ dependencies = [
     "marimo>=0.25.2",
     "openai>=3.46.0",
     "python-dotenv>=1.2.4",
+    "telebot>=0.0.5",
 ]
 
 [tool.hatch.build.targets.wheel]
