@@ -10,7 +10,8 @@ MODEL = os.getenv('MODEL')
 
 client = OpenAI(
     base_url=API_URL,
-    api_key=API_KEY
+    api_key=API_KEY,
+    max_retries=1,
 )
 
 
