@@ -31,7 +31,11 @@ SYSTEM_PROMPT = '''Ты — доброжелательный преподава�
 При вопросе о предыдущем переводе объясни слова и грамматику с опорой на историю.
 При фотографии переводи видимый текст; если текст неразборчив, честно сообщи об этом.
 Для обычного перевода сначала дай перевод, затем при необходимости короткое пояснение.
-Не выдумывай содержание изображений и не путай казахский с татарским.'''
+Не выдумывай содержание изображений и не путай казахский с татарским.
+Все ответы отображаются в Telegram, поэтому запрещено:
+Использовать Markdown, HTML-теги для форматирования.
+Использовать тройные обратные кавычки для блоков кода.
+Отвечай только содержимым сообщения, без Markdown-обёртки и без пояснений о форматировании.'''
 
 bot = telebot.TeleBot(TOKEN, threaded=False)
 api_url = f'https://api.telegram.org/bot{TOKEN}/'
@@ -112,10 +116,9 @@ def stream_reply(chat_id, messages):
     last = 0.0
     last_sent = ''
     draft_id = int(time.time() * 1000) % 2147483647
-    placeholder = None
+    # Send immediately, before waiting for the first LLM token.
+    placeholder = bot.send_message(chat_id, '💭 Думаю… Ойланып жатырмын…')
     mode = STREAM_MODE
-    if mode == 'edit':
-        placeholder = bot.send_message(chat_id, '✍️ Генерирую перевод…')
     try:
         for chunk in stream_llm(messages):
             text += chunk
@@ -139,7 +142,7 @@ def stream_reply(chat_id, messages):
                 # Keep consuming LLM chunks even if Telegram rejects an update.
         if not text.strip():
             raise RuntimeError('LLM вернула пустой ответ')
-        if mode == 'edit' and placeholder:
+        if placeholder:
             try:
                 bot.delete_message(chat_id, placeholder.message_id)
             except Exception as exc:
